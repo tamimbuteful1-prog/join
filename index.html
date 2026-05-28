@@ -1,37 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نموذج طلب خدمة</title>
-    <!-- استيراد خط عربي حديث -->
+    <title>المساعد الذكي</title>
+    <!-- استيراد خط تجوال -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- مكتبة أيقونات بسيطة -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
-            /* لوحة الألوان: بنفسجي فاتح وأبيض */
-            --primary-color: #8e24aa;      /* بنفسجي متوسط للأزرار والعناوين */
-            --primary-light: #f3e5f5;      /* بنفسجي فاتح جداً للخلفيات */
-            --primary-hover: #7b1fa2;      /* بنفسجي داكن قليلاً عند التحويم */
+            --primary-color: #8e24aa;
+            --primary-light: #f3e5f5;
+            --primary-dark: #6a1b9a;
+            --bg-color: #f0f2f5;
             --white: #ffffff;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --border-color: #e1bee7;       /* حدود بنفسجية فاتحة */
-            --success-color: #4caf50;
-            --error-color: #f44336;
-            --radius: 12px;
-            --shadow: 0 10px 30px rgba(142, 36, 170, 0.1);
+            --user-msg-bg: #8e24aa;
+            --user-msg-text: #ffffff;
+            --bot-msg-bg: #ffffff;
+            --bot-msg-text: #333333;
+            --gray-border: #ddd;
+            --shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         * {
@@ -42,378 +32,480 @@
         }
 
         body {
-            background-color: var(--primary-light);
-            color: var(--text-dark);
+            background-color: var(--bg-color);
+            height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            background-color: var(--white);
-            width: 100%;
-            max-width: 700px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            flex-direction: column;
             overflow: hidden;
-            border-top: 5px solid var(--primary-color);
         }
 
-        header {
-            padding: 40px 30px 20px;
-            text-align: center;
+        /* رأس الدردشة */
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
-        header h1 {
-            color: var(--primary-color);
-            font-size: 2rem;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        header p {
-            color: var(--text-light);
-            font-size: 1rem;
-            line-height: 1.6;
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        .form-content {
-            padding: 10px 40px 40px;
+        .status {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4caf50;
+            border-radius: 50%;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-dark);
-            font-size: 0.95rem;
+        /* منطقة المحادثة */
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background-color: #fafafa;
-            color: var(--text-dark);
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            background-color: var(--white);
-            box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* حقل "أخرى" مخفي افتراضياً */
-        #otherServiceGroup {
-            display: none;
-            animation: fadeIn 0.4s ease-in-out;
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            position: relative;
+            animation: fadeIn 0.3s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        button.submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+        .message-wrapper.user {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message-wrapper.bot {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 1rem;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: var(--shadow);
+        }
+
+        .user .message-bubble {
+            background-color: var(--user-msg-bg);
+            color: var(--user-msg-text);
+            border-bottom-left-radius: 4px;
+        }
+
+        .bot .message-bubble {
+            background-color: var(--bot-msg-bg);
+            color: var(--bot-msg-text);
+            border-bottom-right-radius: 4px;
+        }
+
+        /* أدوات الرسالة (تعديل/حذف) */
+        .message-actions {
             display: flex;
-            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .message-wrapper:hover .message-actions {
+            opacity: 1;
+        }
+
+        /* على الجوال نظهر الأزرار دائماً للتسهيل */
+        @media (max-width: 768px) {
+            .message-actions {
+                opacity: 1;
+            }
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #777;
+            padding: 2px 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .action-btn.delete:hover {
+            color: #d32f2f;
+            background-color: #ffebee;
+        }
+
+        /* صندوق الإدخال */
+        .input-area {
+            background-color: var(--white);
+            padding: 15px;
+            display: flex;
             align-items: center;
             gap: 10px;
+            border-top: 1px solid var(--gray-border);
         }
 
-        button.submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(142, 36, 170, 0.3);
+        .message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid var(--gray-border);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
         }
 
-        button.submit-btn:active {
-            transform: translateY(0);
+        .message-input:focus {
+            border-color: var(--primary-color);
         }
 
-        button.submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
             border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            display: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: background 0.3s, transform 0.1s;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .send-btn:hover {
+            background-color: var(--primary-dark);
         }
 
-        /* Success Message */
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 30px;
-            background-color: #e8f5e9;
-            border-radius: var(--radius);
-            margin-top: 20px;
-            color: #2e7d32;
-            animation: scaleUp 0.4s ease-out;
+        .send-btn:active {
+            transform: scale(0.95);
         }
 
-        .success-icon {
-            font-size: 3rem;
+        .send-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* مؤشر الكتابة */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 10px 15px;
+            background-color: var(--bot-msg-bg);
+            border-radius: 18px;
+            width: fit-content;
             margin-bottom: 10px;
-            display: block;
+            display: none; /* مخفي افتراضياً */
         }
 
-        @keyframes scaleUp {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #bbb;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
         }
 
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: none;
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            header {
-                padding: 30px 20px 10px;
-            }
-            .form-content {
-                padding: 10px 20px 30px;
-            }
-            header h1 {
-                font-size: 1.6rem;
-            }
+        /* حقل التعديل داخل الفقاعة */
+        .edit-input {
+            width: 100%;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: inherit;
+            padding: 5px;
+            border-radius: 5px;
+            outline: none;
+            font-family: inherit;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>نموذج طلب خدمة</h1>
-            <p>يرجى تعبئة البيانات التالية بدقة، وسيتم مراجعة طلبك والتواصل معك في أقرب وقت ممكن.</p>
-        </header>
-
-        <main class="form-content">
-            <!-- رسالة النجاح (مخفية) -->
-            <div id="successMessage" class="success-message">
-                <span class="success-icon">✔</span>
-                <h2>تم إرسال طلبك بنجاح</h2>
-                <p>شكراً لك، سنقوم بمراجعة التفاصيل والرد عليك قريباً.</p>
+    <!-- رأس الدردشة -->
+    <header class="chat-header">
+        <div class="chat-header-info">
+            <div class="avatar">
+                <i class="fas fa-robot"></i>
             </div>
-
-            <!-- النموذج -->
-            <form id="serviceForm">
-                
-                <div class="form-group">
-                    <label for="fullName">الاسم الكامل <span style="color:red">*</span></label>
-                    <input type="text" id="fullName" name="fullName" placeholder="أدخل اسمك الثلاثي" required>
+            <div>
+                <h3>المساعد الذكي</h3>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>متصل الآن</span>
                 </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <i class="fas fa-ellipsis-v" style="cursor: pointer; opacity: 0.8;"></i>
+        </div>
+    </header>
 
-                <div class="form-group">
-                    <label for="phone">رقم الجوال <span style="color:red">*</span></label>
-                    <input type="tel" id="phone" name="phone" placeholder="05xxxxxxxx" required pattern="[0-9]*">
-                </div>
+    <!-- منطقة الرسائل -->
+    <main class="chat-container" id="chatContainer">
+        <!-- رسالة ترحيب -->
+        <div class="message-wrapper bot">
+            <div class="message-bubble">
+                مرحباً بك! أنا مساعدك الذكي. كيف يمكنني مساعدتك اليوم؟
+            </div>
+        </div>
+    </main>
 
-                <div class="form-group">
-                    <label for="email">البريد الإلكتروني <span style="color:red">*</span></label>
-                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="workType">نوع العمل</label>
-                    <input type="text" id="workType" name="workType" placeholder="مثال: شركة، متجر إلكتروني، مشروع شخصي...">
-                </div>
-
-                <div class="form-group">
-                    <label for="serviceType">الخدمة المطلوبة <span style="color:red">*</span></label>
-                    <select id="serviceType" name="serviceType" required>
-                        <option value="" disabled selected>-- اختر الخدمة --</option>
-                        <option value="content">صناعة محتوى</option>
-                        <option value="visual">إنتاج مرئي</option>
-                        <option value="design">تصميم</option>
-                        <option value="montage">مونتاج</option>
-                        <option value="ai">ذكاء اصطناعي</option>
-                        <option value="marketing">تسويق رقمي</option>
-                        <option value="project-dev">تطوير فكرة مشروع</option>
-                        <option value="other">أخرى</option>
-                    </select>
-                </div>
-
-                <!-- حقل يظهر عند اختيار "أخرى" -->
-                <div class="form-group" id="otherServiceGroup">
-                    <label for="otherServiceText">اكتب الخدمة المطلوبة <span style="color:red">*</span></label>
-                    <input type="text" id="otherServiceText" name="otherServiceText">
-                </div>
-
-                <div class="form-group">
-                    <label for="budget">الميزانية المتوقعة</label>
-                    <input type="text" id="budget" name="budget" placeholder="مثال: 1000 - 5000 ريال">
-                </div>
-
-                <div class="form-group">
-                    <label for="description">وصف المشروع <span style="color:red">*</span></label>
-                    <textarea id="description" name="description" placeholder="اشرح فكرة مشروعك باختصار..." required></textarea>
-                </div>
-
-                <!-- تم التعديل هنا ليكون نص عادي مع placeholder y/m/d -->
-                <div class="form-group">
-                    <label for="startDate">موعد البدء المفضل</label>
-                    <input type="text" id="startDate" name="startDate" placeholder="y/m/d">
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">ملاحظات إضافية</label>
-                    <textarea id="notes" name="notes" placeholder="أي تفاصيل أخرى تود إضافتها..."></textarea>
-                </div>
-
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <span class="btn-text">إرسال الطلب</span>
-                    <div class="spinner"></div>
-                </button>
-                <div id="formError" class="error-message" style="text-align: center; margin-top: 10px;"></div>
-            </form>
-        </main>
+    <!-- مؤشر الكتابة (يظهر عند انتظار الرد) -->
+    <div class="message-wrapper bot" id="typingIndicatorWrapper" style="display: none; align-self: flex-start; margin-bottom: 15px; margin-right: 20px;">
+        <div class="typing-indicator" style="display: flex;">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
     </div>
 
+    <!-- منطقة الإدخال -->
+    <footer class="input-area">
+        <input type="text" class="message-input" id="messageInput" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+        <button class="send-btn" id="sendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </footer>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('serviceForm');
-            const serviceSelect = document.getElementById('serviceType');
-            const otherServiceGroup = document.getElementById('otherServiceGroup');
-            const otherServiceInput = document.getElementById('otherServiceText');
-            const submitBtn = document.getElementById('submitBtn');
-            const spinner = document.querySelector('.spinner');
-            const btnText = document.querySelector('.btn-text');
-            const successMessage = document.getElementById('successMessage');
-            const formError = document.getElementById('formError');
+        // المتغيرات الأساسية
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const typingIndicatorWrapper = document.getElementById('typingIndicatorWrapper');
+        
+        // رابط الويب هوك الخاص بـ n8n
+        const WEBHOOK_URL = 'https://tamim15.app.n8n.cloud/webhook-test/9470a5b3-f05a-4846-ae52-3b8d0a3d0c16';
 
-            // رابط الويب هوك (يجب استبداله برابطك الفعلي)
-            const WEBHOOK_URL = 'PASTE_N8N_WEBHOOK_URL_HERE';
+        // إدارة الجلسة (Session ID)
+        let sessionId = localStorage.getItem('n8n_chat_session_id');
+        if (!sessionId) {
+            sessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('n8n_chat_session_id', sessionId);
+        }
 
-            // التعامل مع اختيار "أخرى"
-            serviceSelect.addEventListener('change', (e) => {
-                if (e.target.value === 'other') {
-                    otherServiceGroup.style.display = 'block';
-                    otherServiceInput.required = true;
-                    otherServiceInput.focus();
-                } else {
-                    otherServiceGroup.style.display = 'none';
-                    otherServiceInput.required = false;
-                    otherServiceInput.value = ''; // مسح القيمة
-                }
-            });
+        // دالة إنشاء معرف فريد للرسالة
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
 
-            // دالة إظهار/إخفاء التحميل
-            function setLoading(isLoading) {
-                if (isLoading) {
-                    submitBtn.disabled = true;
-                    spinner.style.display = 'block';
-                    btnText.textContent = 'جاري الإرسال...';
-                    formError.style.display = 'none';
-                } else {
-                    submitBtn.disabled = false;
-                    spinner.style.display = 'none';
-                    btnText.textContent = 'إرسال الطلب';
-                }
+        // دالة التمرير للأسفل
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // دالة إضافة رسالة للواجهة
+        function addMessageToUI(text, sender, id = null) {
+            const msgId = id || generateId();
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${sender}`;
+            wrapper.id = `msg-${msgId}`;
+
+            // إنشاء الفقاعة
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = text;
+
+            wrapper.appendChild(bubble);
+
+            // إذا كانت رسالة مستخدم، أضف أزرار التعديل والحذف
+            if (sender === 'user') {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                
+                // زر التعديل
+                const editBtn = document.createElement('button');
+                editBtn.className = 'action-btn';
+                editBtn.innerHTML = '<i class="fas fa-pen"></i> تعديل';
+                editBtn.onclick = () => enableEditMode(msgId, bubble, text);
+                
+                // زر الحذف
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn delete';
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i> حذف';
+                deleteBtn.onclick = () => deleteMessage(msgId);
+
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(deleteBtn);
+                wrapper.appendChild(actionsDiv);
             }
 
-            // معالجة إرسال النموذج
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                // التحقق من صحة حقل "أخرى" إذا كان مطلوباً
-                if (serviceSelect.value === 'other' && !otherServiceInput.value.trim()) {
-                    formError.textContent = 'يرجى كتابة اسم الخدمة المطلوبة';
-                    formError.style.display = 'block';
-                    return;
-                }
+            chatContainer.appendChild(wrapper);
+            scrollToBottom();
+            return msgId;
+        }
 
-                setLoading(true);
-
-                // تجميع البيانات
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-
-                // تحسين البيانات (إرسال اسم الخدمة بشكل واضح)
-                if (data.serviceType === 'other') {
-                    data.serviceType = `أخرى: ${data.otherServiceText}`;
-                }
-                // حذف حقل النص الإضافي من البيانات المرسلة لأنه مدمج الآن
-                delete data.otherServiceText;
-
-                try {
-                    const response = await fetch("https://tamim15.app.n8n.cloud/webhook/9470a5b3-f05a-4846-ae52-3b8d0a3d0c16", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    if (response.ok) {
-                        // إخفاء النموذج وإظهار رسالة النجاح
-                        form.style.display = 'none';
-                        successMessage.style.display = 'block';
-                        // سكرول للأعلى لرؤية الرسالة في الجوال
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        throw new Error('فشل الإرسال');
-                    }
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    formError.textContent = 'حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى لاحقاً.';
-                    formError.style.display = 'block';
-                } finally {
-                    setLoading(false);
+        // تفعيل وضع التعديل
+        function enableEditMode(msgId, bubbleElement, currentText) {
+            // استبدال النص بحقل إدخال
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'edit-input';
+            
+            // حفظ التعديل عند الضغط على Enter
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveEdit(msgId, input.value, bubbleElement, input);
                 }
             });
+
+            // حفظ عند فقدان التركيز (اختياري، أو يمكن إضافة زر حفظ)
+            input.addEventListener('blur', () => {
+                 // تأخير بسيط للسماح بالنقر على أزرار أخرى إذا لزم الأمر
+                 // saveEdit(msgId, input.value, bubbleElement, input);
+            });
+
+            bubbleElement.textContent = ''; // مسح النص
+            bubbleElement.appendChild(input);
+            input.focus();
+        }
+
+        // حفظ التعديل
+        function saveEdit(msgId, newText, bubbleElement, inputElement) {
+            if (newText.trim() === "") return;
+            
+            bubbleElement.removeChild(inputElement);
+            bubbleElement.textContent = newText;
+            
+            // ملاحظة: هذا التعديل محلي فقط في الواجهة.
+            // إذا أردت إرسال التعديل للـ Bot مرة أخرى، يجب استدعاء دالة الإرسال هنا
+            // وحذف الرسائل القديمة، لكن سنكتفي بالتعديل البصري كما هو مطلوب غالباً في واجهات الدردشة البسيطة.
+        }
+
+        // حذف رسالة
+        function deleteMessage(msgId) {
+            const msgElement = document.getElementById(`msg-${msgId}`);
+            if (msgElement) {
+                msgElement.style.opacity = '0';
+                setTimeout(() => {
+                    msgElement.remove();
+                }, 300);
+            }
+        }
+
+        // دالة الإرسال الرئيسية
+        async function handleSend() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            // 1. إضافة رسالة المستخدم
+            addMessageToUI(text, 'user');
+            messageInput.value = '';
+            messageInput.focus();
+
+            // 2. إظهار مؤشر الكتابة
+            showTyping(true);
+
+            // 3. إرسال البيانات للويب هوك
+            try {
+                const payload = {
+                    message: text,
+                    sessionId: sessionId
+                };
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // 4. استقبال الرد ومعالجته
+                const data = await response.json();
+                
+                // افترض أن الرد في الحقل "reply" كما هو مطلوب
+                const botReply = data.reply || "عذراً، لم أستطع فهم الرد بشكل صحيح.";
+
+                showTyping(false);
+                addMessageToUI(botReply, 'bot');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showTyping(false);
+                addMessageToUI("عذراً، حدث خطأ في الاتصال بالخادم.", 'bot');
+            }
+        }
+
+        // إظهار/إخفاء مؤشر الكتابة
+        function showTyping(show) {
+            if (show) {
+                typingIndicatorWrapper.style.display = 'block';
+                // نقل المؤشر لأسفل قليلاً
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } else {
+                typingIndicatorWrapper.style.display = 'none';
+            }
+        }
+
+        // التعامل مع أحداث الإدخال
+        sendBtn.addEventListener('click', handleSend);
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSend();
+            }
         });
+
     </script>
 </body>
-</html>
-    
-  </body>
-  
 </html>
