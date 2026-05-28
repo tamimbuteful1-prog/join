@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج طلب خدمة</title>
+    <!-- استيراد خط عربي حديث -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* لوحة الألوان: بنفسجي فاتح وأبيض */
+            --primary-color: #8e24aa;      /* بنفسجي متوسط للأزرار والعناوين */
+            --primary-light: #f3e5f5;      /* بنفسجي فاتح جداً للخلفيات */
+            --primary-hover: #7b1fa2;      /* بنفسجي داكن قليلاً عند التحويم */
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #e1bee7;       /* حدود بنفسجية فاتحة */
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --radius: 12px;
+            --shadow: 0 10px 30px rgba(142, 36, 170, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-light);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--white);
+            width: 100%;
+            max-width: 700px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        header {
+            padding: 40px 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .form-content {
+            padding: 10px 40px 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+            color: var(--text-dark);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* حقل "أخرى" مخفي افتراضياً */
+        #otherServiceGroup {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button.submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(142, 36, 170, 0.3);
+        }
+
+        button.submit-btn:active {
+            transform: translateY(0);
+        }
+
+        button.submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: #e8f5e9;
+            border-radius: var(--radius);
+            margin-top: 20px;
+            color: #2e7d32;
+            animation: scaleUp 0.4s ease-out;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            header {
+                padding: 30px 20px 10px;
+            }
+            .form-content {
+                padding: 10px 20px 30px;
+            }
+            header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>نموذج طلب خدمة</h1>
+            <p>يرجى تعبئة البيانات التالية بدقة، وسيتم مراجعة طلبك والتواصل معك في أقرب وقت ممكن.</p>
+        </header>
+
+        <main class="form-content">
+            <!-- رسالة النجاح (مخفية) -->
+            <div id="successMessage" class="success-message">
+                <span class="success-icon">✔</span>
+                <h2>تم إرسال طلبك بنجاح</h2>
+                <p>شكراً لك، سنقوم بمراجعة التفاصيل والرد عليك قريباً.</p>
+            </div>
+
+            <!-- النموذج -->
+            <form id="serviceForm">
+                
+                <div class="form-group">
+                    <label for="fullName">الاسم الكامل <span style="color:red">*</span></label>
+                    <input type="text" id="fullName" name="fullName" placeholder="أدخل اسمك الثلاثي" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">رقم الجوال <span style="color:red">*</span></label>
+                    <input type="tel" id="phone" name="phone" placeholder="05xxxxxxxx" required pattern="[0-9]*">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني <span style="color:red">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="workType">نوع العمل</label>
+                    <input type="text" id="workType" name="workType" placeholder="مثال: شركة، متجر إلكتروني، مشروع شخصي...">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceType">الخدمة المطلوبة <span style="color:red">*</span></label>
+                    <select id="serviceType" name="serviceType" required>
+                        <option value="" disabled selected>-- اختر الخدمة --</option>
+                        <option value="content">صناعة محتوى</option>
+                        <option value="visual">إنتاج مرئي</option>
+                        <option value="design">تصميم</option>
+                        <option value="montage">مونتاج</option>
+                        <option value="ai">ذكاء اصطناعي</option>
+                        <option value="marketing">تسويق رقمي</option>
+                        <option value="project-dev">تطوير فكرة مشروع</option>
+                        <option value="other">أخرى</option>
+                    </select>
+                </div>
+
+                <!-- حقل يظهر عند اختيار "أخرى" -->
+                <div class="form-group" id="otherServiceGroup">
+                    <label for="otherServiceText">اكتب الخدمة المطلوبة <span style="color:red">*</span></label>
+                    <input type="text" id="otherServiceText" name="otherServiceText">
+                </div>
+
+                <div class="form-group">
+                    <label for="budget">الميزانية المتوقعة</label>
+                    <input type="text" id="budget" name="budget" placeholder="مثال: 1000 - 5000 ريال">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">وصف المشروع <span style="color:red">*</span></label>
+                    <textarea id="description" name="description" placeholder="اشرح فكرة مشروعك باختصار..." required></textarea>
+                </div>
+
+                <!-- تم التعديل هنا ليكون نص عادي مع placeholder y/m/d -->
+                <div class="form-group">
+                    <label for="startDate">موعد البدء المفضل</label>
+                    <input type="text" id="startDate" name="startDate" placeholder="y/m/d">
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">ملاحظات إضافية</label>
+                    <textarea id="notes" name="notes" placeholder="أي تفاصيل أخرى تود إضافتها..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">إرسال الطلب</span>
+                    <div class="spinner"></div>
+                </button>
+                <div id="formError" class="error-message" style="text-align: center; margin-top: 10px;"></div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('serviceForm');
+            const serviceSelect = document.getElementById('serviceType');
+            const otherServiceGroup = document.getElementById('otherServiceGroup');
+            const otherServiceInput = document.getElementById('otherServiceText');
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.querySelector('.spinner');
+            const btnText = document.querySelector('.btn-text');
+            const successMessage = document.getElementById('successMessage');
+            const formError = document.getElementById('formError');
+
+            // رابط الويب هوك (يجب استبداله برابطك الفعلي)
+            const WEBHOOK_URL = 'PASTE_N8N_WEBHOOK_URL_HERE';
+
+            // التعامل مع اختيار "أخرى"
+            serviceSelect.addEventListener('change', (e) => {
+                if (e.target.value === 'other') {
+                    otherServiceGroup.style.display = 'block';
+                    otherServiceInput.required = true;
+                    otherServiceInput.focus();
+                } else {
+                    otherServiceGroup.style.display = 'none';
+                    otherServiceInput.required = false;
+                    otherServiceInput.value = ''; // مسح القيمة
+                }
+            });
+
+            // دالة إظهار/إخفاء التحميل
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    submitBtn.disabled = true;
+                    spinner.style.display = 'block';
+                    btnText.textContent = 'جاري الإرسال...';
+                    formError.style.display = 'none';
+                } else {
+                    submitBtn.disabled = false;
+                    spinner.style.display = 'none';
+                    btnText.textContent = 'إرسال الطلب';
+                }
+            }
+
+            // معالجة إرسال النموذج
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // التحقق من صحة حقل "أخرى" إذا كان مطلوباً
+                if (serviceSelect.value === 'other' && !otherServiceInput.value.trim()) {
+                    formError.textContent = 'يرجى كتابة اسم الخدمة المطلوبة';
+                    formError.style.display = 'block';
+                    return;
+                }
+
+                setLoading(true);
+
+                // تجميع البيانات
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                // تحسين البيانات (إرسال اسم الخدمة بشكل واضح)
+                if (data.serviceType === 'other') {
+                    data.serviceType = `أخرى: ${data.otherServiceText}`;
+                }
+                // حذف حقل النص الإضافي من البيانات المرسلة لأنه مدمج الآن
+                delete data.otherServiceText;
+
+                try {
+                    const response = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        // إخفاء النموذج وإظهار رسالة النجاح
+                        form.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        // سكرول للأعلى لرؤية الرسالة في الجوال
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        throw new Error('فشل الإرسال');
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    formError.textContent = 'حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى لاحقاً.';
+                    formError.style.display = 'block';
+                } finally {
+                    setLoading(false);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
